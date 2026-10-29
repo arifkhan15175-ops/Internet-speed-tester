@@ -220,8 +220,6 @@ footer { margin-top: 35px; padding: 20px 0 28px; border-top: 1px solid var(--bor
 <script>
 "use strict";
 
-/* Must match the Cloudflare Worker deployed for your project.
-   Endpoints used: /health, /latency, /download?bytes=N, /upload */
 const WORKER = "https://yousaf-speed-test-api.arifkhan15175.workers.dev";
 
 const CFG = {
@@ -263,11 +261,6 @@ function toast(m) {
   clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1800);
 }
 
-/* =====================================================================
-   GAUGE — two scales: 0–250 Mbps, then 250–1000 Mbps once the needle
-   passes 250. The needle is a spring with a little live jitter so it
-   moves fast and feels alive, like a real speedometer.
-   ===================================================================== */
 const CX = 210, CY = 170, R = 140, SWEEP = 130;
 const RANGES = {
   low:  { min: 0,   max: 250,  ticks: [0, 10, 25, 50, 100, 150, 200, 250], curve: 0.55, label: "SCALE 0 – 250 Mbps" },
@@ -330,7 +323,6 @@ function frame(ts) {
   const eff = G.target * G.noise;
   if (reduceMotion) { G.shown = eff; G.vel = 0; }
   else {
-    // Snappy spring physics for instant response without lag or looseness
     const acc = 140 * (eff - G.shown) - 16 * G.vel; 
     G.vel += acc * dt;
     G.shown += G.vel * dt;
@@ -357,7 +349,6 @@ function setPhase(p) {
   G.live = false;
 }
 
-/* ---------- live graph ---------- */
 function drawGraph() {
   const c = $("graph");
   const dpr = window.devicePixelRatio || 1;
@@ -388,7 +379,6 @@ function drawGraph() {
   plot(series.up, "#b78bff", Math.ceil(CFG.uploadMs / CFG.sampleMs));
 }
 
-/* ---------- steps ---------- */
 function setStep(name) {
   const order = ["ping", "down", "up"];
   document.querySelectorAll(".step").forEach((el) => {
@@ -398,7 +388,6 @@ function setStep(name) {
   });
 }
 
-/* ---------- network helpers ---------- */
 async function fetchT(url, opts = {}, ms = 20000, outerSignal) {
   const ctl = new AbortController();
   const onAbort = () => ctl.abort();
@@ -546,7 +535,6 @@ async function throughputPhase(kind, durationMs, signal) {
   return { mbps, loadedPing: median(loaded) };
 }
 
-/* ---------- grading & suitability ---------- */
 function bufferbloat(idle, loadedDown, loadedUp) {
   const vals = [loadedDown, loadedUp].filter(Number.isFinite);
   if (!vals.length) return { grade: "—", delta: NaN };
@@ -584,7 +572,6 @@ function fmtTime(s) {
   return `${(s / 3600).toFixed(1)} hr`;
 }
 
-/* ---------- history ---------- */
 const HKEY = "signal-speedtest-history";
 function loadHistory() { try { return JSON.parse(localStorage.getItem(HKEY)) || []; } catch { return []; } }
 function saveHistory(h) { try { localStorage.setItem(HKEY, JSON.stringify(h.slice(0, CFG.maxHistory))); } catch { /* storage blocked */ } }
@@ -607,7 +594,6 @@ function exportCSV() {
 
 const summary = (r) => `SIGNAL speed test — ↓ ${fmt(r.down)} Mbps · ↑ ${fmt(r.up)} Mbps · ping ${fmt(r.ping)} ms · jitter ${fmt(r.jitter)} ms · loss ${fmt(r.loss)}% · bufferbloat ${r.bloat}`;
 
-/* ---------- run ---------- */
 function resetResults() {
   ["downloadValue", "uploadValue", "pingValue", "jitterValue", "lossValue", "bloatValue"].forEach((id) => setText(id, "—"));
   $("bloatValue").className = "metric-value grade";
@@ -702,7 +688,6 @@ function viewOnGauge(kind) {
   setReadout(v, true);
 }
 
-/* ---------- wiring ---------- */
 $("goButton").addEventListener("click", runTest);
 $("stopButton").addEventListener("click", () => { if (abortAll) { abortAll.stopped = true; abortAll.abort(); } });
 document.addEventListener("keydown", (e) => {
