@@ -223,16 +223,16 @@ footer { margin-top: 35px; padding: 20px 0 28px; border-top: 1px solid var(--bor
 const WORKER = "https://yousaf-speed-test-api.arifkhan15175.workers.dev";
 
 const CFG = {
-  pingSamples: 16,
-  pingTimeout: 2500,
-  downloadMs: 10000,
-  uploadMs: 8000,
-  warmupMs: 1500,
+  pingSamples: 10,
+  pingTimeout: 3000,
+  downloadMs: 8000,
+  uploadMs: 7000,
+  warmupMs: 1000,
   downloadChunk: 4 * 1024 * 1024,
   uploadChunk: 1024 * 1024,
   streams: 4,
   sampleMs: 100,
-  loadedPingEvery: 500,
+  loadedPingEvery: 400,
   maxHistory: 25
 };
 
@@ -317,13 +317,13 @@ function frame(ts) {
   G.last = ts;
 
   if (G.live && !reduceMotion) {
-    if (ts > G.nextNoise) { G.noise = 1 + (Math.random() - 0.5) * 0.06; G.nextNoise = ts + 60; }
+    if (ts > G.nextNoise) { G.noise = 1 + (Math.random() - 0.5) * 0.04; G.nextNoise = ts + 60; }
   } else G.noise = 1;
 
   const eff = G.target * G.noise;
   if (reduceMotion) { G.shown = eff; G.vel = 0; }
   else {
-    const acc = 140 * (eff - G.shown) - 16 * G.vel; 
+    const acc = 180 * (eff - G.shown) - 20 * G.vel; 
     G.vel += acc * dt;
     G.shown += G.vel * dt;
     if (G.shown < 0) { G.shown = 0; G.vel = 0; }
@@ -336,7 +336,7 @@ function frame(ts) {
 
 let readoutEma = 0;
 function setReadout(mbps, instant) {
-  readoutEma = instant || !readoutEma ? mbps : readoutEma * 0.6 + mbps * 0.4;
+  readoutEma = instant || !readoutEma ? mbps : readoutEma * 0.5 + mbps * 0.5;
   setText("speedValue", mbps > 0 ? fmt(readoutEma) : "—");
 }
 
@@ -388,7 +388,7 @@ function setStep(name) {
   });
 }
 
-async function fetchT(url, opts = {}, ms = 20000, outerSignal) {
+async function fetchT(url, opts = {}, ms = 10000, outerSignal) {
   const ctl = new AbortController();
   const onAbort = () => ctl.abort();
   if (outerSignal) outerSignal.addEventListener("abort", onAbort, { once: true });
@@ -396,13 +396,15 @@ async function fetchT(url, opts = {}, ms = 20000, outerSignal) {
   try { return await fetch(url, { ...opts, signal: ctl.signal, cache: "no-store" }); }
   finally { clearTimeout(t); if (outerSignal) outerSignal.removeEventListener("abort", onAbort); }
 }
+
 async function pingOnce(timeout = CFG.pingTimeout, signal) {
   const t0 = performance.now();
-  const r = await fetchT(endpoint("/latency"), {}, timeout, signal);
+  const r = await fetchT(endpoint("/latency"), { mode: "cors" }, timeout, signal);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   await r.arrayBuffer();
   return performance.now() - t0;
 }
+
 const median = (a) => {
   if (!a.length) return NaN;
   const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
@@ -411,7 +413,6 @@ const median = (a) => {
 
 async function measureIdleLatency(signal) {
   const samples = []; let failed = 0;
-  await pingOnce(CFG.pingTimeout, signal).catch(() => {});
   for (let i = 0; i < CFG.pingSamples; i++) {
     if (signal.aborted) throw new DOMException("Aborted", "AbortError");
     try { samples.push(await pingOnce(CFG.pingTimeout, signal)); }
@@ -419,7 +420,7 @@ async function measureIdleLatency(signal) {
     setStatus(`Measuring ping… ${i + 1}/${CFG.pingSamples}`);
     if (samples.length) setText("speedValue", fmt(samples[samples.length - 1]));
   }
-  if (!samples.length) throw new Error("No latency responses received.");
+  if (!samples.length) throw new Error("Could not reach test server. Check network connection.");
   let diffs = 0;
   for (let i = 1; i < samples.length; i++) diffs += Math.abs(samples[i] - samples[i - 1]);
   return {
@@ -455,9 +456,9 @@ async function throughputPhase(kind, durationMs, signal) {
     try {
       if (kind === "down") {
         while (!psig.aborted) {
-          const r = await fetchT(endpoint(`/download?bytes=${CFG.downloadChunk}`), {}, durationMs + 5000, psig);
-          if (!r.ok) throw new Error(`Download failed: HTTP ${r.status}.`);
-          if (!r.body) throw new Error("Your browser does not support streamed downloads.");
+          const r = await fetchT(endpoint(`/download?bytes=${CFG.downloadChunk}`), { mode: "cors" }, durationMs + 2000, psig);
+          if (!r.ok) throw new Error(`Download HTTP ${r.status}`);
+          if (!r.body) throw new Error("Stream reader not available");
           const reader = r.body.getReader();
           while (true) {
             const { done, value } = await reader.read();
@@ -476,7 +477,7 @@ async function throughputPhase(kind, durationMs, signal) {
             xhr.upload.onprogress = (e) => { bytes += e.loaded - last; last = e.loaded; };
             xhr.onload = () => {
               if (xhr.status >= 200 && xhr.status < 300) { bytes += CFG.uploadChunk - last; resolve(); }
-              else reject(new Error(`Upload failed: HTTP ${xhr.status}.`));
+              else reject(new Error(`Upload HTTP ${xhr.status}`));
             };
             xhr.onerror = () => reject(new TypeError("network"));
             xhr.onabort = () => resolve();
@@ -492,9 +493,9 @@ async function throughputPhase(kind, durationMs, signal) {
   });
 
   const prober = (async () => {
-    await sleep(600);
+    await sleep(400);
     while (!psig.aborted) {
-      try { loaded.push(await pingOnce(4000, psig)); } catch (e) { /* ignore */ }
+      try { loaded.push(await pingOnce(300, psig)); } catch (e) {}
       await sleep(CFG.loadedPingEvery);
     }
   })();
@@ -518,16 +519,16 @@ async function throughputPhase(kind, durationMs, signal) {
     setStatus(`${kind === "down" ? "Measuring download" : "Measuring upload"}… ${Math.max(0, Math.ceil((durationMs - el) / 1000))}s`);
     if (el >= durationMs) phaseCtl.abort();
   }
+
   signal.removeEventListener("abort", onOuter);
-  await Promise.allSettled([...workers, prober]);
   if (failure) throw failure;
   if (signal.aborted) throw new DOMException("Aborted", "AbortError");
 
   const end = performance.now();
-  const useWarm = warmTime && end - warmTime > 1500;
+  const useWarm = warmTime && end - warmTime > 1000;
   const dBytes = useWarm ? bytes - warmBytes : bytes;
   const secs = (useWarm ? end - warmTime : end - t0) / 1000;
-  if (!bytes || secs <= 0) throw new Error(`No ${kind === "down" ? "download" : "upload"} data was transferred.`);
+  if (!bytes || secs <= 0) throw new Error(`No ${kind} data transferred.`);
   const mbps = (dBytes * 8) / secs / 1e6;
 
   G.target = mbps; G.live = false;
@@ -608,7 +609,7 @@ function resetResults() {
 }
 
 function prewarmWorker() {
-  fetch(endpoint("/health"), { method: "GET", cache: "no-store" }).catch(() => {});
+  fetch(endpoint("/latency"), { mode: "cors", cache: "no-store" }).catch(() => {});
 }
 
 async function runTest() {
@@ -621,15 +622,6 @@ async function runTest() {
   resetResults(); makeUploadBuf();
 
   try {
-    setStatus("Connecting to the test server…");
-    let hr;
-    try {
-      hr = await fetchT(endpoint("/health"), {}, 15000, sig);
-    } catch (e) {
-      hr = await fetchT(endpoint("/health"), {}, 15000, sig);
-    }
-    if (!hr.ok) throw new Error(`Cloudflare Worker returned HTTP ${hr.status}.`);
-
     setStep("ping"); setPhase("ping");
     const lat = await measureIdleLatency(sig);
     setText("pingValue", fmt(lat.ping)); setText("jitterValue", fmt(lat.jitter)); setText("lossValue", fmt(lat.loss));
@@ -638,16 +630,15 @@ async function runTest() {
     const dl = await throughputPhase("down", CFG.downloadMs, sig);
     setText("downloadValue", fmt(dl.mbps));
 
-    setStatus(`Download complete: ${fmt(dl.mbps)} Mbps. Starting upload…`);
-    await sleep(900);
+    setStatus(`Download: ${fmt(dl.mbps)} Mbps. Next: Upload…`);
     G.target = 0; setText("speedValue", "—");
-    await sleep(900);
+    await sleep(300);
     if (sig.aborted) throw new DOMException("Aborted", "AbortError");
 
     setStep("up");
     const ul = await throughputPhase("up", CFG.uploadMs, sig);
     setText("uploadValue", fmt(ul.mbps));
-    await sleep(900);
+    await sleep(200);
 
     const bb = bufferbloat(lat.ping, dl.loadedPing, ul.loadedPing);
     setText("bloatValue", bb.grade);
@@ -668,7 +659,7 @@ async function runTest() {
     } else {
       console.error("Speed test error:", error);
       let msg = error && error.name === "AbortError" ? "Request timed out. Please try again." : (error.message || "The test could not be completed.");
-      if (error instanceof TypeError) msg = "Could not reach the server. Check the Worker URL and CORS settings.";
+      if (error instanceof TypeError) msg = "Connection error. Check network or server status.";
       setStatus(msg); $("goButton").textContent = "TRY AGAIN";
     }
     G.target = 0; G.live = false;
