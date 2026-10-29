@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101113">
+<meta name="description" content="Measure your internet download speed, upload speed, ping and jitter with a real network speed test.">
+<title>SIGNAL — Internet Speed Test</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101113;
+  --panel: #17191c;
+  --border: #303338;
+  --text: #f4f5f6;
+  --muted: #9a9da5;
+  --accent: #d7ff64;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button { font: inherit; }
+.page {
+  width: min(100% - 36px, 940px);
+  margin: auto;
+}
+header {
+  min-height: 78px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  position: relative;
+}
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 2px;
+  background: var(--accent);
+  top: 9px;
+  left: 5px;
+  transform: rotate(-35deg);
+}
+.header-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+main { padding: 55px 0 35px; }
+.intro { text-align: center; margin-bottom: 22px; }
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 700;
+}
+h1 {
+  margin: 12px 0;
+  font-size: clamp(32px, 5vw, 48px);
+  letter-spacing: -2px;
+  line-height: 1.1;
+}
+.subtitle { color: var(--muted); font-size: 14px; }
+.test-panel {
+  max-width: 660px;
+  margin: 28px auto 20px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+}
+.gauge {
+  display: block;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  overflow: visible;
+}
+.gauge-track, .gauge-progress {
+  fill: none;
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+.gauge-track { stroke: #35383d; }
+.gauge-progress {
+  stroke: var(--accent);
+  stroke-dasharray: 440;
+  stroke-dashoffset: 440;
+  transition: stroke-dashoffset .18s linear;
+}
+.gauge-label {
+  fill: var(--muted);
+  font-size: 12px;
+}
+.needle {
+  stroke: var(--text);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transform-origin: 210px 190px;
+  transform: rotate(-130deg);
+  transition: transform .18s linear;
+}
+.needle-dot { fill: var(--text); }
+.speed-readout {
+  margin-top: -22px;
+  text-align: center;
+  min-height: 112px;
+}
+.speed-value {
+  font-size: clamp(44px, 9vw, 66px);
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: -3px;
+  font-variant-numeric: tabular-nums;
+}
+.speed-unit { color: var(--muted); font-size: 13px; }
+.status {
+  margin: 9px 0 17px;
+  min-height: 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.go-button {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  min-height: 54px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #101113;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+.go-button:hover:not(:disabled) { transform: translateY(-1px); }
+.go-button:disabled { opacity: .6; cursor: wait; }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 660px;
+  margin: 20px auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.metric {
+  padding: 20px 10px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.metric:last-child { border-right: 0; }
+.metric-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.metric-value {
+  margin-top: 10px;
+  font-size: clamp(19px, 3vw, 26px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.metric-unit { color: var(--muted); font-size: 11px; }
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 660px;
+  margin: auto;
+}
+.info-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-width: 0;
+}
+.info-title {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.info-value {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.info-detail { margin-top: 5px; color: var(--muted); font-size: 11px; }
+footer {
+  margin-top: 35px;
+  padding: 20px 0 28px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+@media (max-width: 520px) {
+  .page { width: min(100% - 24px, 940px); }
+  main { padding-top: 38px; }
+  .test-panel { padding: 15px 10px 20px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .metric:nth-child(2) { border-right: 0; }
+  .metric:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+  .info-grid { grid-template-columns: 1fr; }
+  header { min-height: 65px; }
+  footer { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>SIGNAL</div>
+    <div class="header-label">INTERNET DIAGNOSTICS</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="eyebrow">Your connection, measured</div>
+      <h1>Know your connection.</h1>
+      <div class="subtitle">A real-world test of your internet performance.</div>
+    </section>
+
+    <section class="test-panel" aria-label="Speed test">
+      <svg class="gauge" viewBox="0 0 420 245" role="img"
+           aria-label="Speedometer showing measured internet speed">
+        <path class="gauge-track" pathLength="440"
+          d="M 55 190 A 155 155 0 0 1 365 190"/>
+        <path id="gaugeProgress" class="gauge-progress" pathLength="440"
+          d="M 55 190 A 155 155 0 0 1 365 190"/>
+        <g class="gauge-label">
+          <text x="43" y="215">0</text>
+          <text x="210" y="22" text-anchor="middle">500</text>
+          <text x="377" y="215" text-anchor="end">1000+</text>
+          <text x="210" y="47" text-anchor="middle">Mbps</text>
+        </g>
+        <line id="needle" class="needle" x1="210" y1="190"
+          x2="210" y2="78"/>
+        <circle class="needle-dot" cx="210" cy="190" r="5"/>
+      </svg>
+
+      <div class="speed-readout" aria-live="polite">
+        <div id="speedValue" class="speed-value">—</div>
+        <div class="speed-unit">MEGABITS PER SECOND</div>
+        <div id="status" class="status">Ready when you are.</div>
+      </div>
+
+      <button id="goButton" class="go-button" type="button">GO</button>
+    </section>
+
+    <section class="metrics" aria-label="Test results">
+      <div class="metric">
+        <div class="metric-label">↓ Download</div>
+        <div id="downloadValue" class="metric-value">—</div>
+        <div class="metric-unit">Mbps</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">↑ Upload</div>
+        <div id="uploadValue" class="metric-value">—</div>
+        <div class="metric-unit">Mbps</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">◷ Ping</div>
+        <div id="pingValue" class="metric-value">—</div>
+        <div class="metric-unit">ms</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">↕ Jitter</div>
+        <div id="jitterValue" class="metric-value">—</div>
+        <div class="metric-unit">ms</div>
+      </div>
+    </section>
+
+    <section class="info-grid" aria-label="Connection information">
+      <div class="info-card">
+        <div class="info-title">Your network</div>
+        <div id="networkValue" class="info-value">Not detected</div>
+        <div class="info-detail">Your ISP name is not exposed by this test.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-title">Test server</div>
+        <div class="info-value">Cloudflare edge network</div>
+        <div class="info-detail">Automatically routed to an available edge location.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Measurements depend on your connection and device.</span>
+    <span>SIGNAL / NETWORK TEST</span>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/*
+ * This must match the Cloudflare Worker deployed for your project.
+ */
+const WORKER = "https://yousaf-speed-test-api.arifkhan15175.workers.dev";
+
+const DOWNLOAD_BYTES = 4 * 1024 * 1024;
+const UPLOAD_BYTES = 2 * 1024 * 1024;
+const PARALLEL_REQUESTS = 3;
+const LATENCY_SAMPLES = 8;
+
+const $ = (id) => document.getElementById(id);
+const button = $("goButton");
+const statusText = $("status");
+const speedText = $("speedValue");
+const progressPath = $("gaugeProgress");
+const needle = $("needle");
+
+let running = false;
+
+function nonce() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random()}`;
+}
+
+function endpoint(path) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${WORKER}${path}${separator}nocache=${encodeURIComponent(nonce())}`;
+}
+
+function setStatus(message) {
+  statusText.textContent = message;
+}
+
+function setMetric(id, value) {
+  $(id).textContent = value;
+}
+
+function formatNumber(value) {
+  if (!Number.isFinite(value)) return "—";
+  if (value >= 100) return value.toFixed(0);
+  if (value >= 10) return value.toFixed(1);
+  return value.toFixed(2);
+}
+
+function updateGauge(mbps) {
+  const safeSpeed = Math.max(0, Number(mbps) || 0);
+  const fraction = Math.min(safeSpeed / 1000, 1);
+
+  progressPath.style.strokeDashoffset = String(440 * (1 - fraction));
+  needle.style.transform = `rotate(${-130 + fraction * 260}deg)`;
+  speedText.textContent = formatNumber(safeSpeed);
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      cache: "no-store"
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function checkWorker() {
+  const response = await fetchWithTimeout(
+    endpoint("/health"), {}, 10000
+  );
+  if (!response.ok) {
+    throw new Error(`Cloudflare Worker returned HTTP ${response.status}.`);
+  }
+}
+
+async function measurePing() {
+  const samples = [];
+
+  for (let i = 0; i < LATENCY_SAMPLES; i++) {
+    const started = performance.now();
+
+    const response = await fetchWithTimeout(
+      endpoint("/latency"), {}, 10000
+    );
+
+    if (!response.ok) {
+      throw new Error(`Latency request failed: HTTP ${response.status}.`);
+    }
+
+    await response.arrayBuffer();
+    samples.push(performance.now() - started);
+  }
+
+  const sorted = [...samples].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+
+  let differences = 0;
+  for (let i = 1; i < samples.length; i++) {
+    differences += Math.abs(samples[i] - samples[i - 1]);
+  }
+
+  const jitter = differences / (samples.length - 1);
+
+  return { ping: median, jitter };
+}
+
+async function measureDownload() {
+  let totalBytes = 0;
+  const started = performance.now();
+  let lastUpdate = started;
+  let lastBytes = 0;
+
+  const jobs = Array.from({ length: PARALLEL_REQUESTS }, async () => {
+    const response = await fetchWithTimeout(
+      endpoint(`/download?bytes=${DOWNLOAD_BYTES}`),
+      {},
+      30000
+    );
+
+    if (!response.ok) {
+      throw new Error(`Download failed: HTTP ${response.status}.`);
+    }
+    if (!response.body) {
+      throw new Error("Your browser does not support streamed downloads.");
+    }
+
+    const reader = response.body.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalBytes += value.byteLength;
+
+      const now = performance.now();
+      if (now - lastUpdate >= 150) {
+        const seconds = (now - lastUpdate) / 1000;
+        const newBytes = totalBytes - lastBytes;
+        const liveMbps = (newBytes * 8) / seconds / 1e6;
+
+        updateGauge(liveMbps);
+        setStatus("Measuring download speed…");
+
+        lastUpdate = now;
+        lastBytes = totalBytes;
+      }
+    }
+  });
+
+  await Promise.all(jobs);
+
+  const elapsedSeconds = (performance.now() - started) / 1000;
+  if (elapsedSeconds <= 0 || totalBytes === 0) {
+    throw new Error("No download data was received.");
+  }
+
+  return (totalBytes * 8) / elapsedSeconds / 1e6;
+}
+
+function randomUploadBuffer(size) {
+  const data = new Uint8Array(size);
+
+  // Generate random data in small chunks to respect Web Crypto limits.
+  for (let offset = 0; offset < size; offset += 65536) {
+    crypto.getRandomValues(
+      data.subarray(offset, Math.min(offset + 65536, size))
+    );
+  }
+
+  return data;
+}
+
+async function measureUpload() {
+  const payload = randomUploadBuffer(UPLOAD_BYTES);
+  let acknowledgedBytes = 0;
+  const started = performance.now();
+
+  await Promise.all(
+    Array.from({ length: PARALLEL_REQUESTS }, async () => {
+      const response = await fetchWithTimeout(
+        endpoint("/upload"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/octet-stream" },
+          body: payload
+        },
+        30000
+      );
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: HTTP ${response.status}.`);
+      }
+
+      // Count bytes only after the server acknowledges the upload.
+      await response.arrayBuffer();
+      acknowledgedBytes += payload.byteLength;
+    })
+  );
+
+  const elapsedSeconds = (performance.now() - started) / 1000;
+  if (elapsedSeconds <= 0 || acknowledgedBytes === 0) {
+    throw new Error("The server did not acknowledge uploaded data.");
+  }
+
+  return (acknowledgedBytes * 8) / elapsedSeconds / 1e6;
+}
+
+function resetResults() {
+  setMetric("downloadValue", "—");
+  setMetric("uploadValue", "—");
+  setMetric("pingValue", "—");
+  setMetric("jitterValue", "—");
+  updateGauge(0);
+  $("networkValue").textContent =
+    navigator.connection && navigator.connection.effectiveType
+      ? `Browser reports ${navigator.connection.effectiveType}`
+      : "Browser network type unavailable";
+}
+
+async function runTest() {
+  if (running) return;
+  running = true;
+  button.disabled = true;
+  button.textContent = "TESTING…";
+  resetResults();
+
+  try {
+    setStatus("Connecting to the test server…");
+    await checkWorker();
+
+    setStatus("Measuring ping and jitter…");
+    const latency = await measurePing();
+    setMetric("pingValue", formatNumber(latency.ping));
+    setMetric("jitterValue", formatNumber(latency.jitter));
+
+    setStatus("Measuring download speed…");
+    const download = await measureDownload();
+    setMetric("downloadValue", formatNumber(download));
+    updateGauge(download);
+
+    setStatus("Measuring upload speed…");
+    const upload = await measureUpload();
+    setMetric("uploadValue", formatNumber(upload));
+    updateGauge(download);
+
+    setStatus("Test completed.");
+    button.textContent = "TEST AGAIN";
+  } catch (error) {
+    console.error("Speed test error:", error);
+
+    let message = error && error.name === "AbortError"
+      ? "Request timed out. Please try again."
+      : (error.message || "The test could not be completed.");
+
+    if (error instanceof TypeError) {
+      message = "Could not reach the server. Check the Worker URL and CORS settings.";
+    }
+
+    setStatus(message);
+    button.textContent = "TRY AGAIN";
+  } finally {
+    running = false;
+    button.disabled = false;
+  }
+}
+
+button.addEventListener("click", runTest);
+
+if ("connection" in navigator && navigator.connection.effectiveType) {
+  $("networkValue").textContent =
+    `Browser reports ${navigator.connection.effectiveType}`;
+}
+</script>
+</body>
+</html>
