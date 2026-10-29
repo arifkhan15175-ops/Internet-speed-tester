@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://arifkhan15175-ops.github.io/sitemap.xml
