@@ -28,67 +28,6 @@
 <meta name="twitter:image" content="https://arifkhan15175-ops.github.io/Internet-speed-tester/icon-192.png">
 <meta name="color-scheme" content="dark">
 
-<!-- Structured Data (WebApplication + FAQPage Schema) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebApplication",
-      "@id": "https://arifkhan15175-ops.github.io/Internet-speed-tester/#webapp",
-      "name": "SparkNoa Free Internet Speed Test & Wi‑Fi Analyzer",
-      "url": "https://arifkhan15175-ops.github.io/Internet-speed-tester/",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Any",
-      "description": "A browser-based internet speed test that estimates download speed, upload speed, HTTP latency, jitter, failed HTTP probes, and latency increase under load.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
-    },
-    {
-      "@type": "FAQPage",
-      "@id": "https://arifkhan15175-ops.github.io/Internet-speed-tester/#faq",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is an internet speed test?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "An internet speed test measures how quickly your connection can download data, upload data, and respond to network requests. It helps you estimate real-world performance for streaming, gaming, and work-from-home tasks."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is the difference between download and upload speed in an internet speed test?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Download speed indicates how quickly your connection pulls data from internet servers to your device, while upload speed measures how fast your device sends data back to the internet."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Why is my Wi‑Fi speed slower than my advertised internet plan?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Internet service providers advertise plan speeds under ideal conditions. Wi‑Fi speeds can be affected by signal strength, router distance, walls, channel congestion, and local network contention."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is a good latency (ping) and jitter score for online gaming?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Lower latency and stable jitter generally make online games feel more responsive. The ideal target depends on the game, server location, and route quality, but lower is usually better."
-          }
-        }
-      ]
-    }
-  ]
-}
-</script>
-
 <title>Free Internet Speed Test | Check Download, Upload &amp; Ping Speed | SparkNoa</title>
 
 <style>
@@ -298,20 +237,19 @@ function setStatus(v){setText("status",v)}
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1800)}
 const CX=210,CY=170,R=140,SWEEP=130;
 const RANGES={low:{min:0,max:250,ticks:[0,10,25,50,100,150,200,250],curve:.55,label:"SCALE 0–250 Mbps"},high:{min:250,max:1000,ticks:[250,400,550,700,850,1000],curve:1,label:"SCALE 250–1000+ Mbps"}};
-const G={target:0,shown:0,vel:0,noise:1,nextNoise:0,live:false,high:false,last:0};
+const G={target:0,shown:0,noise:1,nextNoise:0,live:false,high:false,last:0};
 function frac(v,r){return Math.pow(Math.min(1,Math.max(0,(v-r.min)/(r.max-r.min))),r.curve)}
 function polar(deg,r=R){const a=deg*Math.PI/180;return[CX+r*Math.sin(a),CY-r*Math.cos(a)]}
 function drawTicks(){const r=G.high?RANGES.high:RANGES.low;$("ticks").innerHTML=r.ticks.map(v=>{const[x,y]=polar(-SWEEP+frac(v,r)*SWEEP*2,R+22);return`<text class="tick" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle">${v}</text>`}).join("")}
 function buildGauge(){drawTicks()}
-function renderGauge(){const r=G.high?RANGES.high:RANGES.low,f=frac(G.shown,r);const angle=(-SWEEP+f*SWEEP*2);$("gaugeProgress").style.strokeDashoffset=String(100*(1-f));$("needle").setAttribute("transform", `rotate(${angle} 210 170)`);$("gaugeProgress").style.stroke="";$("gaugeProgress").style.stroke = (currentPhase === "up" ? "url(#gUp)" : "url(#gDown)");$("gaugeProgress").style.strokeDasharray="100";$("needle").style.stroke = currentPhase === "up" ? "#f4f5f6" : "#f4f5f6";}
-function frame(ts){requestAnimationFrame(frame);const dt=Math.min(.05,(ts-(G.last||ts))/1000);G.last=ts;if(G.live&&!reduceMotion){if(ts>G.nextNoise){G.noise=1+(Math.random()-.5)*.04;G.nextNoise=ts+80}G.shown+=((G.target*G.noise)-G.shown)*Math.min(1,dt*8);renderGauge();}else if(!G.live){G.shown+=(G.target-G.shown)*Math.min(1,dt*10);renderGauge();}}
+function renderGauge(){const r=G.high?RANGES.high:RANGES.low;const f=frac(G.shown,r);$("gaugeProgress").style.strokeDashoffset=String(100*(1-f));$("needle").style.transform=`rotate(${(-SWEEP+f*SWEEP*2)}deg)`;$("needle").style.transformOrigin="210px 170px";}
+function frame(ts){requestAnimationFrame(frame);const dt=Math.min(.05,(ts-(G.last||ts))/1000);G.last=ts;if(G.live&&!reduceMotion){if(ts>G.nextNoise){G.noise=1+(Math.random()-.5)*.04;G.nextNoise=ts+80}G.shown+=(G.target*G.noise-G.shown)*Math.min(1,dt*8);}else if(!G.live){G.shown+=(G.target-G.shown)*Math.min(1,dt*10)}G.high=G.shown>250;renderGauge();}
 function setReadout(mbps,instant=false){readoutEma=instant||!readoutEma?mbps:readoutEma*.5+mbps*.5;setText("speedValue",Number.isFinite(mbps)?fmt(Math.max(0,readoutEma)):"—")}
-function setPhase(p){currentPhase=p;$("panel").dataset.phase=p==="up"?"up":"down";setText("phaseTitle",({ping:"LATENCY",down:"DOWNLOAD",up:"UPLOAD"}[p]||"READY"));const phaseColor = p === "up" ? "var(--up)" : "var(--down)";$("panel").style.setProperty("--phase", phaseColor);$("gaugeProgress").style.stroke = p === "up" ? "url(#gUp)" : "url(#gDown)";document.querySelectorAll(".step").forEach(el=>{const isActive=el.dataset.step===p;el.classList.toggle("active",isActive);});const r=G.high?RANGES.high:RANGES.low;$("scaleLabel").textContent=r.label;}
+function setPhase(p){currentPhase=p;$("panel").dataset.phase=p==="up"?"up":"down";setText("phaseTitle",({ping:"LATENCY",down:"DOWNLOAD",up:"UPLOAD"}[p]||"READY"));G.high=(p==="up"||G.shown>250);drawTicks();$("gaugeProgress").style.stroke=p==="up"?"url(#gUp)":"url(#gDown)";document.querySelectorAll(".step").forEach(el=>{el.classList.toggle("active",el.dataset.step===p);});const r=G.high?RANGES.high:RANGES.low;$("scaleLabel").textContent=r.label;}
 function drawGraph(){const c=$("graph"),dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr)};const ctx=c.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle="rgba(255,255,255,0.02)";ctx.fillRect(0,0,w,h);const values=series.down.concat(series.up);const max=Math.max(10, ...values, 50);const pad=8;ctx.strokeStyle="#d7ff64";ctx.lineWidth=2;ctx.beginPath();series.down.forEach((v,i)=>{const x=pad+i*((w-pad*2)/Math.max(1,series.down.length-1||1));const y=h-pad-(v/max)*(h-pad*2);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();ctx.strokeStyle="#b78bff";ctx.beginPath();series.up.forEach((v,i)=>{const x=pad+i*((w-pad*2)/Math.max(1,series.up.length-1||1));const y=h-pad-(v/max)*(h-pad*2);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();}
-function setStep(name){const order=["ping","down","up"];document.querySelectorAll(".step").forEach(el=>{const i=order.indexOf(el.dataset.step),cur=order.indexOf(name);el.classList.toggle("active",i===cur);})}
 async function fetchT(url,opts={},ms=10000,outerSignal){const ctl=new AbortController(),onAbort=()=>ctl.abort();if(outerSignal){if(outerSignal.aborted)ctl.abort();else outerSignal.addEventListener("abort",onAbort,{once:true});}const start=performance.now();try{const res=await fetch(url,{...opts,signal:ctl.signal,cache:"no-store"});if(!res.ok)throw new Error(`HTTP ${res.status}`);return await res.json().catch(()=>res.text());}catch(err){if(outerSignal&&outerSignal.aborted)throw err;throw err}finally{if(outerSignal)outerSignal.removeEventListener("abort",onAbort);if(performance.now()-start>ms)throw new Error("Request timed out")}}
-async function pingOnce(timeout=CFG.pingTimeout,signal){const start=performance.now();const url=endpoint("/latency");const ctl=new AbortController();const cleanup=()=>{signal?.removeEventListener("abort",onAbort);};const onAbort=()=>ctl.abort();if(signal){if(signal.aborted)ctl.abort();else signal.addEventListener("abort",onAbort,{once:true});}try{const res=await fetch(url,{mode:"cors",cache:"no-store",signal:ctl.signal});if(!res.ok)throw new Error(`HTTP ${res.status}`);return performance.now()-start;}catch(err){if(signal?.aborted)throw err;return NaN;}finally{cleanup();}}
-async function readDownloadChunk(signal,timeout,onBytes){const start=performance.now();const url=endpoint("/download");const ctl=new AbortController();const onAbort=()=>ctl.abort();if(signal){if(signal.aborted)ctl.abort();else signal.addEventListener("abort",onAbort,{once:true});}try{const res=await fetch(url,{mode:"cors",cache:"no-store",signal:ctl.signal});if(!res.ok)throw new Error(`HTTP ${res.status}`);const ab=await res.arrayBuffer();const bytes=ab.byteLength;onBytes(bytes,performance.now());return bytes;}finally{if(signal)signal.removeEventListener("abort",onAbort);}}
+async function pingOnce(timeout=CFG.pingTimeout,signal){const start=performance.now();const url=endpoint("/latency");const ctl=new AbortController();const onAbort=()=>ctl.abort();if(signal){if(signal.aborted)ctl.abort();else signal.addEventListener("abort",onAbort,{once:true});}try{const res=await fetch(url,{mode:"cors",cache:"no-store",signal:ctl.signal});if(!res.ok)throw new Error(`HTTP ${res.status}`);return performance.now()-start;}catch(err){if(signal?.aborted)throw err;return NaN;}finally{if(signal)signal.removeEventListener("abort",onAbort);}}
+async function readDownloadChunk(signal,timeout,onBytes){const url=endpoint("/download");const ctl=new AbortController();const onAbort=()=>ctl.abort();if(signal){if(signal.aborted)ctl.abort();else signal.addEventListener("abort",onAbort,{once:true});}try{const res=await fetch(url,{mode:"cors",cache:"no-store",signal:ctl.signal});if(!res.ok)throw new Error(`HTTP ${res.status}`);const ab=await res.arrayBuffer();const bytes=ab.byteLength;onBytes(bytes,performance.now());return bytes;}finally{if(signal)signal.removeEventListener("abort",onAbort);}}
 const median=a=>{if(!a.length)return NaN;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
 async function measureIdleLatency(signal){const samples=[];let failed=0;for(let i=0;i<CFG.pingSamples;i++){if(signal.aborted)throw new DOMException("Aborted","AbortError");try{samples.push(await pingOnce(CFG.pingTimeout,signal));}catch{failed++;}await sleep(150);}return{idle:median(samples.filter(Number.isFinite)),failed:failed}} 
 let uploadBuf;
@@ -329,6 +267,7 @@ async function throughputPhase(kind,durationMs,outerSignal){
       if(psig.aborted)break;
      }
     }else{
+     if(!uploadBuf) makeUploadBuf();
      const payload=new Blob([uploadBuf]);
      while(!psig.aborted&&performance.now()<deadline){
       await new Promise((resolve,reject)=>{
@@ -384,9 +323,9 @@ function suitability(r){const{down,up,ping,jitter,failedPct}=r;return[
  {name:"Online gaming",note:"Latency and stability matter more than raw speed",s:rate(ping<40&&jitter<15&&failedPct===0&&r.bloat!="D"&&r.bloat!="F",ping<80&&jitter<30&&failedPct<10)},
  {name:"Large downloads",note:"Higher throughput generally saves time",s:rate(down>=100,down>=25)},
  {name:"Live streaming upload",note:"Actual needs depend on resolution and encoder",s:rate(up>=10,up>=4)}
- ]}
+]}
 function fmtTime(s){if(!Number.isFinite(s)||s<0)return"—";if(s<90)return`${Math.max(1,Math.round(s))} sec`;if(s<5400)return`${Math.round(s/60)} min`;return`${(s/3600).toFixed(1)} hr`}
-function renderUses(r){const label={good:"Likely suitable",ok:"May be suitable",bad:"May struggle"},d=r.down, tier=d>=500?"Very fast":d>=200?"Fast":d>=75?"Above average":d>=25?"Typical broadband":d>=10?"Basic broadband":"Low";const body=suitability(r);const box=$("uses");box.innerHTML=`<div class="use-item"><strong>${tier}</strong><div>Download ${fmt(r.down)} Mbps</div><div class="s ${rate(d>=100,d>=25)}">${label[rate(d>=100,d>=25)]}</div></div>${body.map(item=>`<div class="use-item"><strong>${item.name}</strong><div>${item.note}</div><div class="s ${item.s}">${label[item.s]}</div></div>`).join("")}`;$("verdictTitle").textContent=`${tier} connection` ;$("verdictSub").textContent=`Download ${fmt(r.down)} Mbps · Upload ${fmt(r.up)} Mbps · Idle latency ${fmt(r.ping)} ms`;$("usesSection").hidden=false;}
+function renderUses(r){const label={good:"Likely suitable",ok:"May be suitable",bad:"May struggle"},d=r.down, tier=d>=500?"Very fast":d>=200?"Fast":d>=75?"Above average":d>=25?"Typical broadband":d>=10?"Basic broadband":"Low";const body=suitability(r);const box=$("uses");box.innerHTML=`<div class="use-item"><strong>${tier}</strong><div>Download ${fmt(r.down)} Mbps</div><div class="s ${rate(d>=100,d>=25)}">${label[rate(d>=100,d>=25)]}</div></div>${body.map(item=>`<div class="use-item"><strong>${item.name}</strong><div>${item.note}</div><div class="s ${item.s}">${label[item.s]}</div></div>`).join("")}`;$("verdictTitle").textContent=`${tier} connection`;$("verdictSub").textContent=`Download ${fmt(r.down)} Mbps · Upload ${fmt(r.up)} Mbps · Idle latency ${fmt(r.ping)} ms`;$("usesSection").hidden=false;}
 const HKEY="sparknoa-speedtest-history-v2";
 const OLD_HKEY="velox-speedtest-history-v2";
 try { if (!localStorage.getItem(HKEY) && localStorage.getItem(OLD_HKEY)) { localStorage.setItem(HKEY, localStorage.getItem(OLD_HKEY)); } } catch {}
@@ -399,11 +338,11 @@ const summary=r=>`SparkNoa speed test — Download ${fmt(r.down)} Mbps; Upload $
 function resetResults(){["downloadValue","uploadValue","pingValue","jitterValue","lossValue","bloatValue"].forEach(id=>setText(id,"—"));$("bloatValue").className="metric-value grade";setText("bloatDetail","—");$("usesSection").hidden=true;$("shareSection").hidden=true;$("hint").hidden=true;result=null;}
 function prewarmWorker(){fetch(endpoint("/latency"),{mode:"cors",cache:"no-store"}).catch(()=>{})}
 async function runTest(){if(running)return;running=true;const ctl=new AbortController();abortAll=ctl;const sig=ctl.signal;$("goButton").disabled=true;$("goButton").textContent="TESTING…";$("stopButton").hidden=false;resetResults();
-try{const ping=await measureIdleLatency(sig);const delayMs=(CFG.downloadMs+CFG.uploadMs+CFG.pingSamples*200);const d=await throughputPhase("down",CFG.downloadMs,sig);const u=await throughputPhase("up",CFG.uploadMs,sig);const loadedDown = d.loadedPing ?? NaN;const loadedUp = u.loadedPing ?? NaN;const bloat = bufferbloat(ping.idle, loadedDown, loadedUp);const failedPct = ping.failed > 0 ? (ping.failed / CFG.pingSamples) * 100 : 0;const out={down:d.mbps,up:u.mbps,ping:ping.idle ?? 0,jitter:Math.max(0,Math.abs((loadedDown||0)-(loadedUp||0))),failedPct, bloat: bloat.grade};result=out;setText("downloadValue",fmt(out.down));setText("uploadValue",fmt(out.up));setText("pingValue",fmt(out.ping));setText("jitterValue",fmt(Math.max(0, out.jitter)));setText("lossValue",fmt(out.failedPct));const bloatEl=$("bloatValue");bloatEl.textContent=String(bloat.grade);bloatEl.className=`metric-value grade ${bloat.grade === "A" ? "good" : bloat.grade === "B" || bloat.grade === "C" ? "ok" : "bad"}`;$("bloatDetail").textContent = `${bloat.delta ? `${fmt(bloat.delta)} ms` : "—"}`;renderUses(out);saveHistory([{t:Date.now(),down:out.down,up:out.up,ping:out.ping,jitter:out.jitter,failedPct:out.failedPct,bloat:bloat.grade}, ...loadHistory()].slice(0,CFG.maxHistory));renderHistory();$("shareSection").hidden=false;toast("Speed test complete");}
-catch(err){if(!sig.aborted){setStatus("Test interrupted — try again.");toast("The test was interrupted")}
-}finally{running=false;$("goButton").disabled=false;$("goButton").textContent="GO";$("stopButton").hidden=true;if(abortAll===ctl)abortAll=null;setStatus("Ready when you are. Press Space or tap GO.");}}
+try{const ping=await measureIdleLatency(sig);const d=await throughputPhase("down",CFG.downloadMs,sig);const u=await throughputPhase("up",CFG.uploadMs,sig);const loadedDown = d.loadedPing ?? NaN;const loadedUp = u.loadedPing ?? NaN;const bloat = bufferbloat(ping.idle, loadedDown, loadedUp);const out={down:d.mbps,up:u.mbps,ping:ping.idle ?? 0,jitter:Math.max(0,Math.abs((loadedDown||0)-(loadedUp||0))),failedPct: ping.failed > 0 ? (ping.failed / CFG.pingSamples) * 100 : 0,bloat: bloat.grade};result=out;setText("downloadValue",fmt(out.down));setText("uploadValue",fmt(out.up));setText("pingValue",fmt(out.ping));setText("jitterValue",fmt(Math.max(0, out.jitter)));setText("lossValue",fmt(out.failedPct));const bloatEl=$("bloatValue");bloatEl.textContent=String(bloat.grade);bloatEl.className=`metric-value grade ${bloat.grade === "A" ? "good" : bloat.grade === "B" || bloat.grade === "C" ? "ok" : "bad"}`;$("bloatDetail").textContent = `${bloat.delta ? `${fmt(bloat.delta)} ms` : "—"}`;renderUses(out);saveHistory([{t:Date.now(),down:out.down,up:out.up,ping:out.ping,jitter:out.jitter,failedPct:out.failedPct,bloat:bloat.grade}, ...loadHistory()].slice(0,CFG.maxHistory));renderHistory();$("shareSection").hidden=false;toast("Speed test complete");}
+catch(err){if(!sig.aborted){setStatus("Test interrupted — try again.");toast("The test was interrupted")} }
+finally{running=false;$("goButton").disabled=false;$("goButton").textContent="GO";$("stopButton").hidden=true;if(abortAll===ctl)abortAll=null;setStatus("Ready when you are. Press Space or tap GO.");}}
 function viewOnGauge(kind){if(running||!result)return;setPhase(kind);G.live=false;const v=kind==="down"?result.down:result.up;G.target=v;setReadout(v,true)}
-$("goButton").addEventListener("click",runTest);$("stopButton").addEventListener("click",()=>{if(abortAll){abortAll.stopped=true;abortAll.abort()}});document.addEventListener("keydown",e=>{if(e.code==="Space"&&!(e.target.closest("button"))){e.preventDefault();runTest();}});[["cardDown","down"],["cardUp","up"]].forEach(([id,kind])=>{const el=$(id);el.setAttribute("role","button");el.tabIndex=0;el.setAttribute("aria-label",`View ${kind} speed on gauge`);el.addEventListener("click",()=>viewOnGauge(kind));el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();viewOnGauge(kind);}});});$("copyBtn").addEventListener("click",async()=>{if(!result)return;try{await navigator.clipboard.writeText(summary(result));toast("Result copied")}catch{toast("Clipboard access is unavailable")}});$("shareBtn").addEventListener("click",()=>{if(!result)return;const url=new URL(location.href);url.searchParams.set("result",encodeURIComponent(summary(result)));navigator.share?navigator.share({title:"SparkNoa Speed Test",text:summary(result),url:url.href}):toast("Sharing is not supported in this browser")});$("csvBtn").addEventListener("click",exportCSV);$("clearBtn").addEventListener("click",()=>{saveHistory([]);renderHistory();toast("History cleared")});window.addEventListener("resize",drawGraph);if ("serviceWorker" in navigator && location.protocol === "https:") {window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(err=>{console.warn("SparkNoa service worker registration failed:", err);});});}
+$("goButton").addEventListener("click",runTest);$("stopButton").addEventListener("click",()=>{if(abortAll){abortAll.stopped=true;abortAll.abort()}});document.addEventListener("keydown",e=>{if(e.code==="Space"&&!(e.target.closest("button"))){e.preventDefault();runTest();}});[["cardDown","down"],["cardUp","up"]].forEach(([id,kind])=>{const el=$(id);el.setAttribute("role","button");el.tabIndex=0;el.setAttribute("aria-label",`View ${kind} speed on gauge`);el.addEventListener("click",()=>viewOnGauge(kind));el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();viewOnGauge(kind);}});});$("copyBtn").addEventListener("click",async()=>{if(!result)return;try{await navigator.clipboard.writeText(summary(result));toast("Result copied")}catch{toast("Clipboard access is unavailable")}});$("csvBtn").addEventListener("click",exportCSV);$("clearBtn").addEventListener("click",()=>{saveHistory([]);renderHistory();toast("History cleared")});window.addEventListener("resize",drawGraph);if ("serviceWorker" in navigator && location.protocol === "https:") {window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js").catch(err=>{console.warn("SparkNoa service worker registration failed:", err);});});}
 
 buildGauge();setPhase("down");setText("phaseTitle","READY");drawGraph();renderHistory();prewarmWorker();requestAnimationFrame(frame);
 </script>
