@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101113">
-<meta name="description" content="Free internet speed test to measure download speed, upload speed, ping, jitter, failed HTTP probes, and latency under load with SparkNoa.">
-<meta name="keywords" content="internet speed test, download speed test, upload speed test, ping test, jitter test, Wi-Fi speed test, broadband test, bufferbloat test">
+<meta name="application-name" content="SparkNoa Internet Speed Test">
+<meta name="description" content="Free internet speed test to check download speed, upload speed, ping, jitter, latency under load, and Wi‑Fi performance in seconds.">
+<meta name="keywords" content="internet speed test, free internet speed test, Wi‑Fi speed test, download speed test, upload speed test, ping test, jitter test, latency test, bufferbloat test, broadband test">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="author" content="SparkNoa Network Tools">
 <link rel="canonical" href="https://arifkhan15175-ops.github.io/Internet-speed-tester/">
@@ -15,14 +16,15 @@
 <link rel="preconnect" href="https://yousaf-speed-test-api.arifkhan15175.workers.dev" crossorigin>
 <link rel="dns-prefetch" href="https://yousaf-speed-test-api.arifkhan15175.workers.dev">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
 <meta property="og:url" content="https://arifkhan15175-ops.github.io/Internet-speed-tester/">
-<meta property="og:title" content="Free Internet Speed Test | Download, Upload & Ping | SparkNoa">
-<meta property="og:description" content="Measure download and upload speeds, HTTP latency, jitter, and latency under load with SparkNoa’s free browser-based internet speed test.">
+<meta property="og:title" content="Free Internet Speed Test | Check Download, Upload & Ping Speed | SparkNoa">
+<meta property="og:description" content="Measure download speed, upload speed, ping, jitter, and latency under load with SparkNoa’s free internet speed test.">
 <meta property="og:site_name" content="SparkNoa Speed Test">
 <meta property="og:image" content="https://arifkhan15175-ops.github.io/Internet-speed-tester/icon-192.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Free Internet Speed Test | Download, Upload & Ping | SparkNoa">
-<meta name="twitter:description" content="Check download, upload, latency, and jitter in your browser. Review practical guidance based on your results.">
+<meta name="twitter:title" content="Free Internet Speed Test | Check Download, Upload & Ping Speed | SparkNoa">
+<meta name="twitter:description" content="Run a free internet speed test to check download speed, upload speed, ping, jitter, and Wi‑Fi performance in your browser.">
 <meta name="twitter:image" content="https://arifkhan15175-ops.github.io/Internet-speed-tester/icon-192.png">
 <meta name="color-scheme" content="dark">
 
@@ -34,11 +36,11 @@
     {
       "@type": "WebApplication",
       "@id": "https://arifkhan15175-ops.github.io/Internet-speed-tester/#webapp",
-      "name": "SparkNoa Free Internet Speed Test & Wi-Fi Analyzer",
+      "name": "SparkNoa Free Internet Speed Test & Wi‑Fi Analyzer",
       "url": "https://arifkhan15175-ops.github.io/Internet-speed-tester/",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Any",
-      "description": "A browser-based internet speed test that estimates download and upload throughput, HTTP response latency, jitter, failed HTTP probes, and latency increase under load.",
+      "description": "A browser-based internet speed test that estimates download speed, upload speed, HTTP latency, jitter, failed HTTP probes, and latency increase under load.",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -51,18 +53,26 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is the difference between download and upload speed in an internet speed test?",
+          "name": "What is an internet speed test?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Download speed indicates how quickly your connection pulls data from internet servers to your device (essential for 4K streaming and downloading files). Upload speed measures how fast your device sends data to the internet (critical for video conferencing, live streaming, and cloud backups)."
+            "text": "An internet speed test measures how quickly your connection can download data, upload data, and respond to network requests. It helps you estimate real-world performance for streaming, video calls, gaming, and file transfers."
           }
         },
         {
           "@type": "Question",
-          "name": "Why is my Wi-Fi speed slower than my advertised internet plan?",
+          "name": "What is the difference between download and upload speed in an internet speed test?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Internet Service Providers advertise plan speeds under particular conditions. Wi-Fi speeds can be affected by signal strength, router distance, walls, channel congestion, and the capabilities of your router and device."
+            "text": "Download speed indicates how quickly your connection pulls data from internet servers to your device, while upload speed measures how fast your device sends data back to the internet. Both matter for streaming, gaming, cloud backups, and video calls."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is my Wi‑Fi speed slower than my advertised internet plan?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Internet service providers advertise plan speeds under ideal conditions. Wi‑Fi speeds can be affected by signal strength, router distance, walls, channel congestion, and limitations of your modem, router, or device."
           }
         },
         {
@@ -70,7 +80,7 @@
           "name": "What is a good latency (ping) and jitter score for online gaming?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "For responsive online gaming, lower latency and stable jitter generally help. Actual performance also depends on the game server, routing, and local network conditions."
+            "text": "Lower latency and stable jitter generally make online games feel more responsive. The ideal target depends on the game, server location, and route quality, but lower and more consistent values usually help."
           }
         }
       ]
@@ -79,7 +89,7 @@
 }
 </script>
 
-<title>Free Internet Speed Test | Download, Upload &amp; Ping | SparkNoa</title>
+<title>Free Internet Speed Test | Check Download, Upload &amp; Ping Speed | SparkNoa</title>
 
 <style>
 :root{color-scheme:dark;--bg:#101113;--panel:#17191c;--panel2:#1d2024;--border:#303338;--text:#f4f5f6;--muted:#a3a6af;--accent:#d7ff64;--down:#d7ff64;--up:#b78bff;--phase:var(--down);--good:#7be38a;--ok:#ffd166;--bad:#ff6b6b}
@@ -103,7 +113,6 @@ h1{margin:12px 0;font-size:clamp(30px,5vw,46px);letter-spacing:-1.5px;line-heigh
 .section{max-width:760px;margin:28px auto 18px}.section h2{font-size:14px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin:0 0 12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px}.section h2 button{background:none;border:0;color:var(--muted);font-size:11px;cursor:pointer;letter-spacing:.5px;text-transform:none;padding:2px 6px}.verdict{padding:18px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;background:var(--panel)}.verdict-title{font-size:20px;font-weight:750;letter-spacing:-.5px}.verdict-sub{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.5}.uses{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.use{padding:14px;border:1px solid var(--border);border-radius:12px;display:flex;gap:12px;align-items:center}.use-ico{width:10px;height:10px;border-radius:50%;background:var(--border);flex:none}.use.good .use-ico{background:var(--good)}.use.ok .use-ico{background:var(--ok)}.use.bad .use-ico{background:var(--bad)}.use-name{font-size:13px;font-weight:650}.use-note{font-size:11px;color:var(--muted);margin-top:2px}
 .history{border:1px solid var(--border);border-radius:12px;overflow:hidden}.history table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.history th,.history td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}.history th:first-child,.history td:first-child{text-align:left}.history th{color:var(--muted);font-weight:600;font-size:11px;background:var(--panel)}.history tr:last-child td{border-bottom:0}.history-scroll{overflow-x:auto}.empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}
 
-/* SEO Content Section Formatting */
 .content-note{max-width:760px;margin:35px auto 0;color:var(--muted);font-size:14px;line-height:1.6}
 .content-note h2{color:var(--text);font-size:20px;letter-spacing:-.4px;margin-top:28px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .content-note h3{color:var(--accent);font-size:15px;margin-top:20px;margin-bottom:6px}
@@ -129,17 +138,16 @@ footer{margin-top:40px;padding:22px 0 28px;border-top:1px solid var(--border);co
 <div class="page">
 <header role="banner">
   <div class="brand"><span class="brand-mark" aria-hidden="true"></span>SparkNoa</div>
-  <div class="header-label">BROADBAND &amp; WI-FI DIAGNOSTICS</div>
+  <div class="header-label">BROADBAND &amp; WI‑FI DIAGNOSTICS</div>
 </header>
 
 <main id="main-content">
 <section class="intro">
   <div class="eyebrow">Real-time network test</div>
-  <h1>Free Internet Speed Test &amp; Wi-Fi Speed Analyzer</h1>
-  <div class="subtitle">Welcome to SparkNoa — an instant, zero-bloat <strong>internet speed tester</strong>. Accurately measure download throughput, upload capacity, idle latency, jitter, and bufferbloat directly in your browser.</div>
+  <h1>Free Internet Speed Test | Download, Upload &amp; Ping Speed</h1>
+  <div class="subtitle">Run a free <strong>internet speed test</strong> to measure download speed, upload speed, ping, jitter, and latency under load in seconds. SparkNoa gives you a fast, browser-based check for your Wi‑Fi or broadband connection.</div>
 </section>
 
-<!-- Speed Test Utility Panel with Pre-rendered SVG Structure to prevent CLS -->
 <section class="test-panel" id="panel" data-phase="down" aria-label="Speed test gauge">
   <div class="steps" id="steps">
     <span class="step" data-step="ping">Latency</span>
@@ -191,7 +199,6 @@ footer{margin-top:40px;padding:22px 0 28px;border-top:1px solid var(--border);co
   </div>
 </section>
 
-<!-- Real-time Diagnostics Dashboard -->
 <section class="metrics" aria-label="Test results dashboard">
   <div class="metric" id="cardDown"><div class="metric-label">↓ Download</div><div id="downloadValue" class="metric-value down">—</div><div class="metric-unit">Mbps</div></div>
   <div class="metric" id="cardUp"><div class="metric-label">↑ Upload</div><div id="uploadValue" class="metric-value up">—</div><div class="metric-unit">Mbps</div></div>
@@ -221,43 +228,45 @@ footer{margin-top:40px;padding:22px 0 28px;border-top:1px solid var(--border);co
   <div class="history"><div class="history-scroll" id="history" aria-live="polite"></div></div>
 </section>
 
-<!-- Deep Semantic SEO Content & E-E-A-T Optimization -->
 <article class="content-note" aria-labelledby="about-title">
-  <h2 id="about-title">Understanding Your Internet Speed &amp; Network Diagnostics</h2>
-  <p>Our online <strong>internet speed test</strong> evaluates the true quality of your broadband connection. SparkNoa transfers test data between your browser and a Cloudflare Worker endpoint to estimate the performance of this route. Results can vary with server load, Wi-Fi conditions, device performance, and other network traffic. Use these measurements as a practical snapshot rather than a guaranteed measure of your internet plan.</p>
+  <h2 id="about-title">What is an Internet Speed Test?</h2>
+  <p>An <strong>internet speed test</strong> measures how quickly your connection can download data, upload data, and respond to network requests. It shows whether your broadband or Wi‑Fi connection is performing as expected for streaming, remote work, video calls, gaming, and downloading files.</p>
 
-  <h2>What Does This Internet Speed Test Measure?</h2>
-  <p>The test reports estimates based on transfers and HTTP requests between your browser and this site’s Cloudflare Worker. It does not measure every route on the internet, and HTTP latency is not the same as ICMP ping. The load-latency indicator is an estimate, not a certified bufferbloat grade.</p><p>The measurements include:</p>
+  <h2>How to Test Download Speed, Upload Speed, and Ping</h2>
+  <p>Use our free <strong>download speed test</strong> and <strong>upload speed test</strong> to check your connection quality. The tool also measures <strong>ping</strong>, <strong>jitter</strong>, and estimated <strong>latency under load</strong>, helping you understand whether your network is stable or showing signs of congestion.</p>
+
+  <h2>Why Wi‑Fi Speed Tests Matter</h2>
+  <p>A <strong>Wi‑Fi speed test</strong> is useful because your home network can be slower than the speed on your internet plan. Distance from the router, interference, signal quality, device limits, and network congestion all affect real-world performance.</p>
+
+  <h2>What Do the Results Mean?</h2>
   <ul>
-    <li><strong>Download Speed (Mbps):</strong> Measures how fast your device pulls data from remote servers. Crucial for 4K video streaming, web browsing, and downloading heavy games.</li>
-    <li><strong>Upload Speed (Mbps):</strong> Measures how fast your connection sends data outward. High upload throughput is vital for live streaming, Zoom video calls, and cloud backups.</li>
-    <li><strong>Idle Latency (Ping in ms):</strong> The total round-trip time required for a signal to travel to an HTTP server and back. Lower ping rates ensure responsive real-time online gaming and voice communications.</li>
-    <li><strong>Jitter Variance (ms):</strong> Measures the stability and consistency of your connection's latency over time. High jitter causes rubber-banding during competitive online gaming and distorted video calls.</li>
-    <li><strong>Latency Under Load (Bufferbloat):</strong> Evaluates how much your network ping spikes while simultaneously transferring large files. Uncontrolled bufferbloat leads to lagging while multiple family members use the network.</li>
+    <li><strong>Download speed:</strong> how fast your device receives data for streaming, web browsing, and downloads.</li>
+    <li><strong>Upload speed:</strong> how fast your device sends data for video calls, cloud backups, and uploads.</li>
+    <li><strong>Ping:</strong> the time a request takes to reach the server and return.</li>
+    <li><strong>Jitter:</strong> variability in latency, which can affect gaming and live calls.</li>
+    <li><strong>Bufferbloat:</strong> latency increase when the connection is under heavier load.</li>
   </ul>
 
-  <h2>How to Get More Consistent Speed Test Results</h2>
-  <p>For more consistent results, follow these practical recommendations:</p>
-  <ul>
-    <li><strong>Pause Active Downloads:</strong> Ensure cloud backups, software updates, and background video streams are temporarily stopped across all connected devices.</li>
-    <li><strong>Minimize Wi-Fi Interference:</strong> Perform your test near your wireless router. Physical barriers (walls, metal objects) and 2.4GHz home electronics (microwaves, Bluetooth gear) degrade Wi-Fi signal clarity.</li>
-    <li><strong>Compare Wi-Fi vs. Ethernet:</strong> Run an initial test over Wi-Fi, then plug directly into your router via a Cat6 Ethernet cable. A significant drop on Wi-Fi points to router channel congestion rather than ISP throttling.</li>
-    <li><strong>Test at Multiple Times of Day:</strong> Broadband speeds often dip during peak neighborhood usage hours (7 PM – 11 PM). Running periodic tests helps pinpoint local network congestion.</li>
-  </ul>
+  <h2>How to Get More Accurate Speed Test Results</h2>
+  <p>For a more accurate <strong>internet speed checker</strong> result, pause downloads, close background apps, and test near your router. If possible, compare Wi‑Fi and Ethernet connections to understand whether the bottleneck is local network quality or your internet service.</p>
 
   <h2>Frequently Asked Questions</h2>
   <div class="faq-grid">
     <div class="faq-item">
-      <h3>What is the difference between download and upload speed in an internet speed test?</h3>
-      <p>Download speed determines how fast your device receives internet content like web pages, music, and movies. Upload speed determines how quickly you transmit data back to the web, such as attaching email files, uploading videos to YouTube, or sharing live webcam feeds during video calls.</p>
+      <h3>What is an internet speed test?</h3>
+      <p>An internet speed test measures how quickly your connection downloads and uploads data and how responsive the network feels in real time.</p>
     </div>
     <div class="faq-item">
-      <h3>Why is my Wi-Fi speed slower than my advertised internet plan?</h3>
-      <p>Internet Service Providers (ISPs) advertise theoretical maximum speeds based on wired Ethernet connections. Wi-Fi speeds suffer degradation from signal attenuation, router distance, channel overlap on 2.4GHz or 5GHz bands, and limitations of old client network hardware.</p>
+      <h3>What is a good download and upload speed?</h3>
+      <p>It depends on your home, work, and streaming needs. Higher download speed helps with large downloads and 4K streaming, while solid upload speed matters for gaming, meetings, and uploads.</p>
     </div>
     <div class="faq-item">
-      <h3>What is a good latency (ping) and jitter score for online gaming?</h3>
-      <p>Lower latency and stable jitter generally make online games feel more responsive. The best target depends on the game, server location, and network route.</p>
+      <h3>How can I improve my Wi‑Fi speed?</h3>
+      <p>Move closer to the router, reduce interference, avoid crowded Wi‑Fi channels, and compare your result against a wired Ethernet test to identify whether the problem is the connection, the router, or the Wi‑Fi environment.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What is ping and why does it matter?</h3>
+      <p>Ping is the response time between your device and a server. Lower ping helps gaming, voice calls, and live interactions feel smoother and more responsive.</p>
     </div>
   </div>
 </article>
@@ -272,7 +281,6 @@ footer{margin-top:40px;padding:22px 0 28px;border-top:1px solid var(--border);co
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- Core Engine Script -->
 <script>
 "use strict";
 const WORKER="https://yousaf-speed-test-api.arifkhan15175.workers.dev";
@@ -307,7 +315,7 @@ async function readDownloadChunk(signal,timeout,onBytes){const ctl=new AbortCont
 const median=a=>{if(!a.length)return NaN;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
 async function measureIdleLatency(signal){const samples=[];let failed=0;for(let i=0;i<CFG.pingSamples;i++){if(signal.aborted)throw new DOMException("Aborted","AbortError");try{samples.push(await pingOnce(CFG.pingTimeout,signal))}catch(e){if(signal.aborted)throw e;failed++}setStatus(`Measuring HTTP response latency… ${i+1}/${CFG.pingSamples}`);if(samples.length)setText("speedValue",fmt(samples[samples.length-1]))}if(!samples.length)throw new Error("Could not reach the test server. Check your connection or try again.");let diffs=0;for(let i=1;i<samples.length;i++)diffs+=Math.abs(samples[i]-samples[i-1]);return{ping:median(samples),jitter:samples.length>1?diffs/(samples.length-1):0,failedPct:failed/CFG.pingSamples*100}}
 let uploadBuf;
-function makeUploadBuf(){uploadBuf=new Uint8Array(CFG.uploadChunk);for(let o=0;o<uploadBuf.length;o+=65536)crypto.getRandomValues(uploadBuf.subarray(o,Math.min(o+65536,uploadBuf.length))) }
+function makeUploadBuf(){uploadBuf=new Uint8Array(CFG.uploadChunk);for(let o=0;o<uploadBuf.length;o+=65536)crypto.getRandomValues(uploadBuf.subarray(o,Math.min(o+65536,uploadBuf.length)))}
 async function throughputPhase(kind,durationMs,outerSignal){
  const phaseCtl=new AbortController(),psig=phaseCtl.signal,onOuter=()=>phaseCtl.abort();if(outerSignal.aborted)phaseCtl.abort();else outerSignal.addEventListener("abort",onOuter,{once:true});
  setPhase(kind);readoutEma=0;const arr=series[kind];arr.length=0;G.target=0;G.live=true;
@@ -336,7 +344,7 @@ async function throughputPhase(kind,durationMs,outerSignal){
       xhr.onabort=()=>finish(resolve);
       psig.addEventListener("abort",abortXhr,{once:true});xhr.timeout=durationMs+5000;
       try{xhr.send(payload)}catch(e){finish(reject,e)}
-    });
+     });
     }
    }
   }catch(e){if(!psig.aborted){failedWorkers++;throw e}}
