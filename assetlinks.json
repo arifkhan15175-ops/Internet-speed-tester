@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.SparkNoa.twa",
+        "sha256_cert_fingerprints": ["E2:51:7A:78:86:3F:ED:A1:78:98:BD:0D:83:17:B8:56:14:28:04:8B:43:55:F2:1D:7C:FD:27:24:90:44:C5:88"]
+      }
+    }]
